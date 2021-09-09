@@ -8,6 +8,7 @@ import { ILoadingInstance } from 'element-plus/lib/el-loading/src/loading.type'
 const DEAFULT_LOADING = true
 
 class HYRequest {
+  // instance的类型是第三方库axios定的
   instance: AxiosInstance
   interceptors?: HYRequestInterceptors
   showLoading: boolean
@@ -15,6 +16,8 @@ class HYRequest {
 
   constructor(config: HYRequestConfig) {
     // 创建axios实例
+    // 因为原始axios.create的参数config类型为AxiosRequestConfig,但里面没有拦截器属性，所以我对config做了一个扩展改为 HYRequestConfig 类型,它继承于AxiosRequestConfig.
+    // 创建实例保存到instance属性
     this.instance = axios.create(config)
 
     // 保存基本信息
@@ -23,6 +26,7 @@ class HYRequest {
 
     // 使用拦截器
     // 1.从config中取出的拦截器是对应的实例的拦截器
+    // 对实例的拦截器
     this.instance.interceptors.request.use(
       this.interceptors?.requestInterceptor,
       this.interceptors?.requestInterceptorCatch
@@ -33,6 +37,7 @@ class HYRequest {
     )
 
     // 2.添加所有的实例都有的拦截器
+    // 对全局的拦截器
     this.instance.interceptors.request.use(
       (config) => {
         if (this.showLoading) {
@@ -73,7 +78,7 @@ class HYRequest {
       }
     )
   }
-
+  // 对请求的拦截
   request<T>(config: HYRequestConfig<T>): Promise<T> {
     return new Promise((resolve, reject) => {
       // 1.单个请求对请求config的处理

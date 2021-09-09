@@ -1,6 +1,8 @@
 <template>
   <div class="login-panel">
     <h1 class="title">后台管理系统</h1>
+    <!-- stretch 标签的宽度是否自撑开 -->
+    <!-- 标签切换时，v-model 绑定 el-tab-pane 的 name 值 -->
     <el-tabs type="border-card" stretch v-model="currentTab">
       <el-tab-pane name="account">
         <template #label>
@@ -38,12 +40,15 @@ export default defineComponent({
     LoginPhone
   },
   setup() {
+    // 是否记住密码
     const isKeepPassword = ref(true)
+    // InstanceType<typeof LoginAccount> 对象实例类型
     const accountRef = ref<InstanceType<typeof LoginAccount>>()
     const phoneRef = ref<InstanceType<typeof LoginPhone>>()
     const currentTab = ref<string>('account')
     const handleLoginClick = () => {
       if (currentTab.value === 'account') {
+        // accountRef.value 取到LoginAccount组件实例中return中的对象
         accountRef.value?.loginAction(isKeepPassword.value)
       } else {
         phoneRef.value?.loginAction(isKeepPassword.value)

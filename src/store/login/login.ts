@@ -9,21 +9,32 @@ import {
   requestUserMenusByRoleId
 } from '../../service/login/login'
 import router from '../../router'
+
+// Module接收两个类型，第一个为模块中的类型，第二个为根store中的类型
 const loginModule: Module<ILoginState, IRootState> = {
+  // 命名空间
   namespaced: true,
   state() {
     return {
       token: '',
-      userInfo: {}
+      userInfo: {},
+      userMenus: []
     }
   },
   getters: {},
   mutations: {
     changeToken(state, token: string) {
       state.token = token
+    },
+    changeUserInfo(state, userInfo: any) {
+      state.userInfo = userInfo
+    },
+    changeUserMenus(state, userMenus: any) {
+      state.userMenus = userMenus
     }
   },
   actions: {
+    // commit为上下文对象，payload为传入的对象（account）
     async accountLoginAction({ commit }, payload: IAccount) {
       // 实现登录逻辑
       const loginResult = await accountLoginRequest(payload)
@@ -45,6 +56,22 @@ const loginModule: Module<ILoginState, IRootState> = {
 
       // 4.跳到首页
       router.push('/main')
+    },
+    loadLocalLogin({ commit }) {
+      const token = localCache.getCache('token')
+      if (token) {
+        commit('changeToken', token)
+      }
+
+      const userInfo = localCache.getCache('userInfo')
+      if (token) {
+        commit('changeUserInfo', userInfo)
+      }
+
+      const userMenus = localCache.getCache('userMenus')
+      if (token) {
+        commit('changeUserMenus', userMenus)
+      }
     },
     phoneLoginAction({ commit }, payload: any) {
       console.log('执行phoneLoginAction', payload)
